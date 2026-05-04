@@ -394,6 +394,7 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/identity.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/invoke.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/is_transparent.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/operations.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/ranges_operations.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/reference_wrapper.h \
@@ -414,6 +415,7 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/string_view.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/subrange.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/tuple.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ios/fpos.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/access.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/advance.h \
@@ -447,6 +449,7 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/permutable.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/prev.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/projected.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ranges_iterator_traits.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/readable_traits.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_access.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_iterator.h \
@@ -491,6 +494,7 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__mutex/mutex.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__mutex/tag_types.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__mutex/unique_lock.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__node_handle \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/pstl_transform_reduce.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/reduce.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/transform_reduce.h \
@@ -752,6 +756,7 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/tuple \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/type_traits \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/typeinfo \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/utility \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/variant \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
@@ -891,6 +896,41 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
   /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stdint.h \
   /opt/homebrew/include/SFML/Config.hpp \
+  /opt/homebrew/include/SFML/Graphics.hpp \
+  /opt/homebrew/include/SFML/Graphics/BlendMode.hpp \
+  /opt/homebrew/include/SFML/Graphics/CircleShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/Color.hpp \
+  /opt/homebrew/include/SFML/Graphics/Color.inl \
+  /opt/homebrew/include/SFML/Graphics/ConvexShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/CoordinateType.hpp \
+  /opt/homebrew/include/SFML/Graphics/Drawable.hpp \
+  /opt/homebrew/include/SFML/Graphics/Export.hpp \
+  /opt/homebrew/include/SFML/Graphics/Font.hpp \
+  /opt/homebrew/include/SFML/Graphics/Glsl.hpp \
+  /opt/homebrew/include/SFML/Graphics/Glsl.inl \
+  /opt/homebrew/include/SFML/Graphics/Glyph.hpp \
+  /opt/homebrew/include/SFML/Graphics/Image.hpp \
+  /opt/homebrew/include/SFML/Graphics/PrimitiveType.hpp \
+  /opt/homebrew/include/SFML/Graphics/Rect.hpp \
+  /opt/homebrew/include/SFML/Graphics/Rect.inl \
+  /opt/homebrew/include/SFML/Graphics/RectangleShape.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderStates.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderTarget.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderTexture.hpp \
+  /opt/homebrew/include/SFML/Graphics/RenderWindow.hpp \
+  /opt/homebrew/include/SFML/Graphics/Shader.hpp \
+  /opt/homebrew/include/SFML/Graphics/Shape.hpp \
+  /opt/homebrew/include/SFML/Graphics/Sprite.hpp \
+  /opt/homebrew/include/SFML/Graphics/StencilMode.hpp \
+  /opt/homebrew/include/SFML/Graphics/Text.hpp \
+  /opt/homebrew/include/SFML/Graphics/Texture.hpp \
+  /opt/homebrew/include/SFML/Graphics/Transform.hpp \
+  /opt/homebrew/include/SFML/Graphics/Transform.inl \
+  /opt/homebrew/include/SFML/Graphics/Transformable.hpp \
+  /opt/homebrew/include/SFML/Graphics/Vertex.hpp \
+  /opt/homebrew/include/SFML/Graphics/VertexArray.hpp \
+  /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp \
+  /opt/homebrew/include/SFML/Graphics/View.hpp \
   /opt/homebrew/include/SFML/System.hpp \
   /opt/homebrew/include/SFML/System/Angle.hpp \
   /opt/homebrew/include/SFML/System/Angle.inl \
@@ -981,6 +1021,42 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /opt/homebrew/include/SFML/System.hpp:
 
+/opt/homebrew/include/SFML/Graphics/Transformable.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Texture.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Shader.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderTexture.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderTarget.hpp:
+
+/opt/homebrew/include/SFML/Graphics/RenderStates.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Rect.hpp:
+
+/opt/homebrew/include/SFML/Graphics/PrimitiveType.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Glyph.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Glsl.inl:
+
+/opt/homebrew/include/SFML/Graphics/Glsl.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Export.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Drawable.hpp:
+
+/opt/homebrew/include/SFML/Graphics/Color.inl:
+
+/opt/homebrew/include/SFML/Graphics/Color.hpp:
+
+/opt/homebrew/include/SFML/Graphics/CircleShape.hpp:
+
+/opt/homebrew/include/SFML/Graphics/BlendMode.hpp:
+
+/opt/homebrew/include/SFML/Graphics.hpp:
+
 /opt/homebrew/include/SFML/Config.hpp:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/stdint.h:
@@ -1055,8 +1131,6 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rune_t.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rsize_t.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_pid_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_null.h:
@@ -1101,6 +1175,12 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_blkcnt_t.h:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_mutexattr_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_mutex_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_key_t.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_is_heap_until.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_condattr_t.h:
@@ -1113,21 +1193,11 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_endian.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_iterator.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/math.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/get.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_ptrcheck.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_transform.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/types.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_suseconds_t.h:
 
@@ -1157,9 +1227,19 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/wchar.h:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_transform.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/types.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_void.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/variant:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rsize_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/convert_to_timespec.h:
 
@@ -1305,9 +1385,11 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/predicate_traits.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/replace_copy.h:
+/opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_once_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/replace_copy.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/utility:
 
@@ -1393,8 +1475,6 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_function.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_key_t.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/streambuf:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/make_signed.h:
@@ -1466,6 +1546,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/conditional.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivially_move_assignable.h:
+
+/opt/homebrew/include/SFML/Graphics/Text.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/common_reference.h:
 
@@ -1559,12 +1641,6 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/subrange.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/format_to_n_result.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/empty.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_rwlock_t.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/promote.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/size.h:
@@ -1586,6 +1662,12 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal_range.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/enable_borrowed_range.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_rwlock_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/format_to_n_result.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/empty.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_backends/cpu_backends/stable_sort.h:
 
@@ -1612,6 +1694,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/identity.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_int_distribution.h:
+
+/opt/homebrew/include/SFML/Graphics/Image.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/log2.h:
 
@@ -1671,6 +1755,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /opt/homebrew/include/SFML/System/Vector2.inl:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__node_handle:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/type_identity.h:
 
 /opt/homebrew/include/SFML/System/Angle.inl:
@@ -1685,15 +1771,23 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/size.h:
 
+/opt/homebrew/include/SFML/Graphics/StencilMode.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/lexicographical_compare.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uninitialized_algorithms.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/segmented_iterator.h:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_iterator.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/search_n.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_access.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ranges_iterator_traits.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/prev.h:
 
@@ -1757,6 +1851,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/counted_iterator.h:
 
+/opt/homebrew/include/SFML/Graphics/View.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_copy_n.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/common_iterator.h:
@@ -1816,6 +1912,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/unary_function.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/ranges_operations.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/is_transparent.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/set_symmetric_difference.h:
 
@@ -2085,6 +2183,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h:
 
+/opt/homebrew/include/SFML/Graphics/VertexArray.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__atomic/check_memory_order.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/erase_if_container.h:
@@ -2122,6 +2222,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/popcount.h:
+
+/opt/homebrew/include/SFML/Graphics/ConvexShape.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_member_pointer.h:
 
@@ -2163,6 +2265,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/terminate_on_exception.h:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/locale.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_set_symmetric_difference.h:
@@ -2190,6 +2294,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/month.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivially_assignable.h:
+
+/opt/homebrew/include/SFML/Graphics/Transform.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/bit_floor.h:
 
@@ -2225,6 +2331,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/replace_copy_if.h:
 
+/opt/homebrew/include/SFML/Graphics/RectangleShape.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_sample.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/swappable.h:
@@ -2236,8 +2344,6 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/class_or_enum.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_rotate.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_mutex_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/any_of.h:
 
@@ -2321,6 +2427,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_fill.h:
 
+/opt/homebrew/include/SFML/Graphics/Sprite.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/directory_entry.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/year_month_weekday.h:
@@ -2383,6 +2491,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/find_end.h:
 
+/opt/homebrew/include/SFML/Graphics/Transform.inl:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_max.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_copy.h:
@@ -2416,6 +2526,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_scoped_enum.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_find_if_not.h:
+
+/opt/homebrew/include/SFML/Graphics/Font.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_all_of.h:
 
@@ -2454,6 +2566,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl_is_partitioned.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/next.h:
+
+/opt/homebrew/include/SFML/Graphics/CoordinateType.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy_if.h:
 
@@ -2508,6 +2622,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ranges/view_interface.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/string.h:
+
+/opt/homebrew/include/SFML/Graphics/Shape.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config:
 
@@ -2673,8 +2789,6 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_bool.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_mutexattr_t.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_xlocale.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/copy_cvref.h:
@@ -2721,6 +2835,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h:
 
+/opt/homebrew/include/SFML/Graphics/RenderWindow.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/remove_cv.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h:
@@ -2759,6 +2875,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/exchange.h:
 
+/opt/homebrew/include/SFML/Graphics/Vertex.hpp:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_none_of.h:
@@ -2784,6 +2902,8 @@ CMakeFiles/boids_v1.dir/src/main.cpp.o: /Users/stevecutler/Documents/UVIC/Boids/
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__atomic/fence.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_limits.h:
+
+/opt/homebrew/include/SFML/Graphics/Rect.inl:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_trivial.h:
 

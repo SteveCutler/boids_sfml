@@ -34,7 +34,26 @@ int main()
         window.clear(sf::Color::Black);
 
         // draw everything here...
+
+
+        // create an empty shape
+        sf::ConvexShape convex;
+
+        // color
+        convex.setFillColor(sf::Color(100, 250, 50));
+
+        // resize it to 3 points
+        convex.setPointCount(3);
+        
+
+        // define the points
+        convex.setPoint(0, {400.f, 195.f});
+        convex.setPoint(1, {395.f, 205.f});
+        convex.setPoint(2, {405.f, 205.f});
+
+
         // window.draw(...);
+        window.draw(convex);
 
         // end the current frame
         window.display();
