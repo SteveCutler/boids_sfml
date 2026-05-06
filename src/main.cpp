@@ -1,61 +1,43 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include "BoidSystem.hpp"
 
 int main()
 {
-    sf::ContextSettings settings;
-    settings.antiAliasingLevel = 8;
+    unsigned int x_max = 512;
+    unsigned int y_max = 256;
+    // create the window
+    sf::RenderWindow window(sf::VideoMode({x_max, y_max}), "Boids");
 
-    //Render window with added anti-alias
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "My window", sf::Style::Default, sf::State::Windowed, settings);
+    
+    // create the boid system
+    BoidSystem boids(100, x_max, y_max);
 
-    // fix vertical tearing
-    window.setVerticalSyncEnabled(true); // call it once after creating the window
+    // create a clock to track the elapsed time
+    sf::Clock clock;
 
-    //set framerate manually
-    //window.setFramerateLimit(60); // call it once after creating the window
-
-
-    // run the program as long as the window is open
+    // run the main loop
     while (window.isOpen())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
+        // handle events
         while (const std::optional event = window.pollEvent())
         {
-
-
-            // "close requested" event: we close the window
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
 
-         // clear the window with black color
-        window.clear(sf::Color::Black);
+        // make the particle system emitter follow the mouse
+       
+       // particles.setEmitter(window.mapPixelToCoords(mouse));
 
-        // draw everything here...
+        // update it
+        sf::Time elapsed = clock.restart();
+        boids.update(elapsed);
 
-
-        // create an empty shape
-        sf::ConvexShape convex;
-
-        // color
-        convex.setFillColor(sf::Color(100, 250, 50));
-
-        // resize it to 3 points
-        convex.setPointCount(3);
-        
-
-        // define the points
-        convex.setPoint(0, {400.f, 195.f});
-        convex.setPoint(1, {395.f, 205.f});
-        convex.setPoint(2, {405.f, 205.f});
-
-
-        // window.draw(...);
-        window.draw(convex);
-
-        // end the current frame
+        // draw it
+        window.clear();
+        window.draw(boids);
         window.display();
     }
 }
