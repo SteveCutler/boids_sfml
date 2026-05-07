@@ -10,7 +10,7 @@ class BoidSystem : public sf::Drawable, public sf::Transformable
 {
 
 public:
-    BoidSystem(unsigned int count, int x, int y) : m_boids(count), m_vertices(sf::PrimitiveType::Points, count)
+    BoidSystem(unsigned int count, int x, int y) : m_boids(count), m_vertices(sf::PrimitiveType::Points, count), m_width(x), m_height(y)
     {
         SpawnBoids(count, x , y);
     }
@@ -28,12 +28,19 @@ public:
             Boid& p = m_boids[i];
 
 
+            //collision check
+            collision_detect(p, elapsed);
+            
             // update the position of the corresponding vertex
-            m_vertices[i].position.x += p.velocity.x * elapsed.asSeconds();
-            m_vertices[i].position.y += p.velocity.y * elapsed.asSeconds();
+            m_boids[i].position.x += p.velocity.x * elapsed.asSeconds();
+            m_boids[i].position.y += p.velocity.y * elapsed.asSeconds();
 
             // add color
-            m_vertices[i].color = p.color;
+            m_boids[i].color = p.color;
+
+            //copy data over to vertex array
+            m_vertices[i].position = m_boids[i].position;
+            m_vertices[i].color = m_boids[i].color;
 
             // add boundary check
             // check to red on collision
@@ -57,23 +64,45 @@ private:
         target.draw(m_vertices, states);
     }
 
+    // void collision_check(Boid b){
+        
+    // }
+
+
+
     void create_tris(){
     // write function for rendering boids are tris
     }
 
-    void forces(){
-        //write function to update pos, vel, etc
-        //write helper functions for this
-    }
-
-    struct Boid
+        struct Boid
     {
         int id;
         sf::Vector2f velocity;
         sf::Vector2f position;
         sf::Color color;
     };
+    
 
+    void collision_detect(Boid& b, sf::Time elapsed){
+        double x_delta = b.position.x + (b.velocity.x * elapsed.asSeconds());
+        double y_delta = b.position.y + (b.velocity.y * elapsed.asSeconds());
+
+        if ( x_delta > m_width or x_delta < 0){
+            b.velocity.x *= -1;
+            b.color = sf::Color::Red;
+        }
+        if ( y_delta > m_height or y_delta < 0){
+            b.velocity.y *= -1;
+            b.color = sf::Color::Red;
+        }
+
+    }
+    void forces(){
+        //write function to update pos, vel, etc
+        //write helper functions for this
+    }
+
+ 
     void SpawnBoids(std::size_t count, unsigned int x, unsigned int y)
     {
 
@@ -106,6 +135,8 @@ private:
             // unsigned int green = colorDist(rng);
             // unsigned int blue = colorDist(rng);
             // b.color = sf::Color(red,green,blue);
+
+
             //add random greyscale color
             int color = colorDist(rng);
 
@@ -122,6 +153,8 @@ private:
         }
     }
 
+    unsigned int m_width;
+    unsigned int m_height;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };
