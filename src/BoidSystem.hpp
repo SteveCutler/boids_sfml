@@ -10,15 +10,10 @@ class BoidSystem : public sf::Drawable, public sf::Transformable
 {
 
 public:
-    BoidSystem(unsigned int count, int x, int y) : m_boids(count), m_vertices(sf::PrimitiveType::Points, count), m_width(x), m_height(y)
+    BoidSystem(unsigned int count, int x, int y) : m_boids(count*3), m_vertices(sf::PrimitiveType::Triangles, count*3), m_width(x), m_height(y)
     {
         SpawnBoids(count, x , y);
     }
-
-    // void setEmitter(sf::Vector2f position)
-    // {
-    //     m_emitter = position;
-    // }
 
     void update(sf::Time elapsed)
     {
@@ -32,46 +27,16 @@ public:
             collision_detect(p, elapsed);
         
             //add color
-            if (p.hit>0.1){
-                double new_red = std::lerp(static_cast<float>(p.color.r), 255.f, p.hit);
-                double new_green = std::lerp(static_cast<float>(p.color.g), 0.f, p.hit);
-                double new_blue = std::lerp(static_cast<float>(p.color.b), 0.f, p.hit);
-
-                std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
-
-                m_vertices[i].color = sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
-                p.hit -=.0001;
-                
-                std::cout << "Hit = " << p.hit << "\n";
-                std::cout << "id = " << p.id << "\n";
-                std::cout << "Color = "
-                    << static_cast<int>(m_vertices[i].color.r) << " "
-                    << static_cast<int>(m_vertices[i].color.g) << " "
-                    << static_cast<int>(m_vertices[i].color.b) << "\n";
-            }else{
-                // add color
-                m_vertices[i].color = p.color;
-            }
+            //collision_tint(p);
             
-            
-
-
             // update the position of the corresponding vertex
             m_boids[i].position.x += p.velocity.x * elapsed.asSeconds();
             m_boids[i].position.y += p.velocity.y * elapsed.asSeconds();
 
-
-
             //copy data over to vertex array
-            m_vertices[i].position = m_boids[i].position;
-            //m_vertices[i].color = m_boids[i].color;
+            create_tris(p);
+            //m_vertices[i].position = m_boids[i].position;
 
-            // add boundary check
-            // check to red on collision
-          
-            //m_vertices[i].color.a = static_cast<std::uint8_t>(ratio * 255);
-
-            //add size and velocity drag updates
         }
     }
 
@@ -88,15 +53,8 @@ private:
         target.draw(m_vertices, states);
     }
 
-    // void collision_check(Boid b){
-        
-    // }
 
 
-
-    void create_tris(){
-    // write function for rendering boids are tris
-    }
 
         struct Boid
     {
@@ -107,6 +65,45 @@ private:
         double hit;
     };
     
+        void create_tris(Boid& b){
+        sf::Vector2f point1;
+        sf::Vector2f point2;
+        sf::Vector2f point3;
+        sf::Vector2f vel_cross;
+        sf::Color color;
+        int point_id = (b.id)*3;
+
+
+        color = collision_tint(b);
+        
+        vel_cross.x = b.velocity.y * -1;
+        vel_cross.y = b.velocity.x;
+        
+        
+        //write helper function for triangle
+        point1.x = b.position.x + (b.velocity.x * size);
+        point1.y = b.position.y + (b.velocity.y * size);
+
+        point2.x = b.position.x + vel_cross.x * (size*0.5);
+        point2.y = b.position.y + vel_cross.y * (size*0.5);
+
+        point3.x = b.position.x - vel_cross.x * (size*0.5);
+        point3.y = b.position.y - vel_cross.y * (size*0.5);
+
+        //create 3 points of triangle
+        m_vertices[point_id].position = point1;
+        m_vertices[point_id+1].position = point2;
+        m_vertices[point_id+2].position = point3;
+
+        //add colors to points
+        m_vertices[point_id].color = color;
+        m_vertices[point_id+1].color = color;
+        m_vertices[point_id+2].color = color;
+
+
+
+    }
+
 
     void collision_detect(Boid& b, sf::Time elapsed){
         double x_delta = b.position.x + (b.velocity.x * elapsed.asSeconds());
@@ -123,6 +120,25 @@ private:
             b.hit = 1.f;
         }
 
+    }
+
+    sf::Color collision_tint(Boid& b){
+        //add color
+        int point_id = (b.id)*3;
+            if (b.hit>0.1){
+                double new_red = std::lerp(static_cast<float>(b.color.r), 255.f, b.hit);
+                double new_green = std::lerp(static_cast<float>(b.color.g), 0.f, b.hit);
+                double new_blue = std::lerp(static_cast<float>(b.color.b), 0.f, b.hit);
+
+               // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
+
+                b.hit -=.0001;
+                return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
+                
+            }else{
+                // return normal color
+                return b.color;
+            }
     }
 
     
@@ -186,6 +202,7 @@ private:
 
     unsigned int m_width;
     unsigned int m_height;
+    double size = 1;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };
