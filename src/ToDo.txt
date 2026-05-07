@@ -1,0 +1,4 @@
+add random colors
+add boid rules
+make boids into triangles
+add collision objects/boundaries

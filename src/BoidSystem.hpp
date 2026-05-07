@@ -32,7 +32,11 @@ public:
             m_vertices[i].position.x += p.velocity.x * elapsed.asSeconds();
             m_vertices[i].position.y += p.velocity.y * elapsed.asSeconds();
 
-            // update the alpha (transparency) of the particle according to its lifetime
+            // add color
+            m_vertices[i].color = p.color;
+
+            // add boundary check
+            // check to red on collision
           
             //m_vertices[i].color.a = static_cast<std::uint8_t>(ratio * 255);
 
@@ -67,7 +71,7 @@ private:
         int id;
         sf::Vector2f velocity;
         sf::Vector2f position;
-        double color;
+        sf::Color color;
     };
 
     void SpawnBoids(std::size_t count, unsigned int x, unsigned int y)
@@ -77,38 +81,44 @@ private:
         static std::random_device rd;
         static std::mt19937       rng(rd());
 
+        //set possible color range
+        std::uniform_int_distribution<int> colorDist(50, 250);
 
         for (std::size_t i = 0; i < count; ++i){
 
-        Boid b;
-        b.id = i;
+            Boid b;
+            b.id = i;
 
-        // give a random birth position to the boid
-        b.position = sf::Vector2f(std::uniform_real_distribution(0.f, static_cast<float>(x))(rng), std::uniform_real_distribution(0.f, static_cast<float>(y))(rng));
-        
-        // debug pos
+            // give a random birth position to the boid
+            b.position = sf::Vector2f(std::uniform_real_distribution(0.f, static_cast<float>(x))(rng), std::uniform_real_distribution(0.f, static_cast<float>(y))(rng));
 
-        std::cout << "Boid " << i
-          << " position: "
-          << b.position.x
-          << ", "
-          << b.position.y
-          << '\n';
+            //give random birth vel and angle to boid
+            const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
+            const float     speed       = std::uniform_real_distribution(5.f, 10.f)(rng);
 
-        //give random birth vel and angle to boid
-        const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
-        const float     speed       = std::uniform_real_distribution(5.f, 10.f)(rng);
+            // convert angle and speed into vel
+            double vx = std::cos(angle)*speed;
+            double vy = std::sin(angle)*speed;
+            b.velocity = sf::Vector2f(vx, vy);
 
-        // convert angle and speed into vel
-        double vx = std::cos(angle)*speed;
-        double vy = std::sin(angle)*speed;
-        b.velocity = sf::Vector2f(vx, vy);
+            //add random color
+            // unsigned int red = colorDist(rng);
+            // unsigned int green = colorDist(rng);
+            // unsigned int blue = colorDist(rng);
+            // b.color = sf::Color(red,green,blue);
+            //add random greyscale color
+            int color = colorDist(rng);
 
-        //add random color
-        
-        // add point to boids and vertex array
-        m_boids[i] = b;
-        m_vertices[i].position = b.position;
+            std::cout << "Boid " << i
+            << " color: "
+            << color << '\n';
+
+            //unsigned int color = 255;
+            b.color = sf::Color(color,color,color);
+            
+            // add point to boids and vertex array
+            m_boids[i] = b;
+            m_vertices[i].position = b.position;
         }
     }
 
