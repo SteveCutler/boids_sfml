@@ -30,17 +30,41 @@ public:
 
             //collision check
             collision_detect(p, elapsed);
+        
+            //add color
+            if (p.hit>0.1){
+                double new_red = std::lerp(static_cast<float>(p.color.r), 255.f, p.hit);
+                double new_green = std::lerp(static_cast<float>(p.color.g), 0.f, p.hit);
+                double new_blue = std::lerp(static_cast<float>(p.color.b), 0.f, p.hit);
+
+                std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
+
+                m_vertices[i].color = sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
+                p.hit -=.0001;
+                
+                std::cout << "Hit = " << p.hit << "\n";
+                std::cout << "id = " << p.id << "\n";
+                std::cout << "Color = "
+                    << static_cast<int>(m_vertices[i].color.r) << " "
+                    << static_cast<int>(m_vertices[i].color.g) << " "
+                    << static_cast<int>(m_vertices[i].color.b) << "\n";
+            }else{
+                // add color
+                m_vertices[i].color = p.color;
+            }
             
+            
+
+
             // update the position of the corresponding vertex
             m_boids[i].position.x += p.velocity.x * elapsed.asSeconds();
             m_boids[i].position.y += p.velocity.y * elapsed.asSeconds();
 
-            // add color
-            m_boids[i].color = p.color;
+
 
             //copy data over to vertex array
             m_vertices[i].position = m_boids[i].position;
-            m_vertices[i].color = m_boids[i].color;
+            //m_vertices[i].color = m_boids[i].color;
 
             // add boundary check
             // check to red on collision
@@ -80,6 +104,7 @@ private:
         sf::Vector2f velocity;
         sf::Vector2f position;
         sf::Color color;
+        double hit;
     };
     
 
@@ -89,14 +114,18 @@ private:
 
         if ( x_delta > m_width or x_delta < 0){
             b.velocity.x *= -1;
-            b.color = sf::Color::Red;
+            m_boids[b.id].position.x += b.velocity.x * elapsed.asSeconds();
+            b.hit = 1.f;
         }
         if ( y_delta > m_height or y_delta < 0){
             b.velocity.y *= -1;
-            b.color = sf::Color::Red;
+            m_boids[b.id].position.y += b.velocity.y * elapsed.asSeconds();
+            b.hit = 1.f;
         }
 
     }
+
+    
     void forces(){
         //write function to update pos, vel, etc
         //write helper functions for this
@@ -117,6 +146,7 @@ private:
 
             Boid b;
             b.id = i;
+            b.hit =0.f;
 
             // give a random birth position to the boid
             b.position = sf::Vector2f(std::uniform_real_distribution(0.f, static_cast<float>(x))(rng), std::uniform_real_distribution(0.f, static_cast<float>(y))(rng));
@@ -140,9 +170,9 @@ private:
             //add random greyscale color
             int color = colorDist(rng);
 
-            std::cout << "Boid " << i
-            << " color: "
-            << color << '\n';
+            // std::cout << "Boid " << i
+            // << " color: "
+            // << color << '\n';
 
             //unsigned int color = 255;
             b.color = sf::Color(color,color,color);
@@ -150,6 +180,7 @@ private:
             // add point to boids and vertex array
             m_boids[i] = b;
             m_vertices[i].position = b.position;
+            m_vertices[i].color = b.color;
         }
     }
 

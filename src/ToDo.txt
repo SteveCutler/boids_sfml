@@ -1,4 +1,7 @@
 add random colors
 add boid rules
-make boids into triangles
+render boids as triangles
 add collision objects/boundaries
+
+create collision point list?
+create fade back to original color, maybe on hit hit=1, every frame 0.1, multiple red color by hit amount?
