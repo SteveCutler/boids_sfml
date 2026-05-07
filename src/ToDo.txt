@@ -1,7 +1,10 @@
-add random colors
-add boid rules
-render boids as triangles
-add collision objects/boundaries
 
-create collision point list? that way I can say if new pos in collision area reverse, which i thin k is O(1)
-create fade back to original color, maybe on hit hit=1, every frame 0.1, multiple red color by hit amount?
+add boid rules
+correct collision for boid size, global variable
+add collision objects
+    create collision point list? that way I can say if new pos in collision area reverse, which i thin k is O(1)
+
+optimize neighbour search by creating cell structure
+remove self from neighbour search
+
+calculate triangle size based on normalized velocity vector, or some scaling factor randomly created at generation, b.size?

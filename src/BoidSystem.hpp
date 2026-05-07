@@ -20,21 +20,23 @@ public:
         for (std::size_t i = 0; i < m_boids.size(); ++i)
         {
             // update the particle lifetime
-            Boid& p = m_boids[i];
+            Boid& b = m_boids[i];
 
 
             //collision check
-            collision_detect(p, elapsed);
-        
-            //add color
-            //collision_tint(p);
+            collision_detect(b, elapsed);
             
-            // update the position of the corresponding vertex
-            m_boids[i].position.x += p.velocity.x * elapsed.asSeconds();
-            m_boids[i].position.y += p.velocity.y * elapsed.asSeconds();
+            //apply boid forces
+            seperation(b);
+            //alignment
+            //cohesion
 
-            //copy data over to vertex array
-            create_tris(p);
+            // update the position of the corresponding vertex
+            m_boids[i].position.x += b.velocity.x * elapsed.asSeconds();
+            m_boids[i].position.y += b.velocity.y * elapsed.asSeconds();
+
+            //render boids as triangles
+            create_tris(b);
             //m_vertices[i].position = m_boids[i].position;
 
         }
@@ -63,6 +65,7 @@ private:
         sf::Vector2f position;
         sf::Color color;
         double hit;
+        double scale;
     };
     
         void create_tris(Boid& b){
@@ -72,23 +75,24 @@ private:
         sf::Vector2f vel_cross;
         sf::Color color;
         int point_id = (b.id)*3;
+        sf::Vector2f norm_vel = normalize(b.velocity);
 
 
         color = collision_tint(b);
         
-        vel_cross.x = b.velocity.y * -1;
-        vel_cross.y = b.velocity.x;
+        vel_cross.x = norm_vel.y * -1;
+        vel_cross.y = norm_vel.x;
         
         
         //write helper function for triangle
-        point1.x = b.position.x + (b.velocity.x * size);
-        point1.y = b.position.y + (b.velocity.y * size);
+        point1.x = b.position.x + (norm_vel.x * size * b.scale);
+        point1.y = b.position.y + (norm_vel.y * size)* b.scale;
 
-        point2.x = b.position.x + vel_cross.x * (size*0.5);
-        point2.y = b.position.y + vel_cross.y * (size*0.5);
+        point2.x = b.position.x + vel_cross.x * (size*0.5*b.scale);
+        point2.y = b.position.y + vel_cross.y * (size*0.5*b.scale);
 
-        point3.x = b.position.x - vel_cross.x * (size*0.5);
-        point3.y = b.position.y - vel_cross.y * (size*0.5);
+        point3.x = b.position.x - vel_cross.x * (size*0.5*b.scale);
+        point3.y = b.position.y - vel_cross.y * (size*0.5*b.scale);
 
         //create 3 points of triangle
         m_vertices[point_id].position = point1;
@@ -99,8 +103,6 @@ private:
         m_vertices[point_id].color = color;
         m_vertices[point_id+1].color = color;
         m_vertices[point_id+2].color = color;
-
-
 
     }
 
@@ -132,7 +134,7 @@ private:
 
                // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
 
-                b.hit -=.0001;
+                b.hit -=.0005;
                 return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
                 
             }else{
@@ -147,7 +149,60 @@ private:
         //write helper functions for this
     }
 
- 
+    double distance(sf::Vector2f pos1, sf::Vector2f pos2){
+        double dist = sqrt(::pow((pos2.x - pos1.x),2) + std::pow((pos2.y - pos1.y),2));
+        return dist;
+    }
+
+    double calc_length(sf::Vector2f vector){
+        return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
+    }
+
+
+    sf::Vector2f normalize (sf::Vector2f vector){
+        double length = calc_length(vector);
+        return sf::Vector2f((vector.x/length),vector.y/length);
+
+    }
+
+    sf::Vector2f calc_vector(Boid& b1, Boid& b2){
+        return sf::Vector2f((b2.position.x - b1.position.x),(b2.position.y-b1.position.y));
+    }
+    
+    void seperation(Boid& b){
+       //std::vector<Boid&> boids;
+
+        for (Boid& n_boid : m_boids){
+            double dist = distance(b.position,n_boid.position);
+            if(dist<search_dist and n_boid.id != b.id){
+               // boids.push_back(boid);
+
+                double fade = (search_dist-dist)/search_dist;
+                double mag = calc_length(b.velocity);
+                sf::Vector2f norm_vel = normalize(b.velocity);
+
+                sf::Vector2f dir = normalize(calc_vector(n_boid, b));
+                
+
+                std::cout << "Mag: " << mag << " Dir x: " << static_cast<int>(dir.x) << " dir y: " << static_cast<int>(dir.y) << "\n";
+                
+                b.velocity.x = std::lerp(norm_vel.x, dir.x, fade)*mag;
+                b.velocity.y = std::lerp(norm_vel.y, dir.y, fade)*mag;
+            }
+        }
+        
+
+    }
+
+    void alignment(Boid& b){
+        
+    }
+
+    void cohesion(Boid& b){
+        
+    }
+
+
     void SpawnBoids(std::size_t count, unsigned int x, unsigned int y)
     {
 
@@ -163,6 +218,7 @@ private:
             Boid b;
             b.id = i;
             b.hit =0.f;
+            b.scale = (std::uniform_real_distribution(0.6f, 1.1f)(rng));
 
             // give a random birth position to the boid
             b.position = sf::Vector2f(std::uniform_real_distribution(0.f, static_cast<float>(x))(rng), std::uniform_real_distribution(0.f, static_cast<float>(y))(rng));
@@ -202,7 +258,8 @@ private:
 
     unsigned int m_width;
     unsigned int m_height;
-    double size = 1;
+    double size = 5;
+    double search_dist = 5;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };
