@@ -27,7 +27,7 @@ public:
             collision_detect(b, elapsed);
             
             //apply boid forces
-            seperation(b);
+            seperation(b, elapsed);
             //alignment
             //cohesion
 
@@ -134,7 +134,7 @@ private:
 
                // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
 
-                b.hit -=.0005;
+                b.hit -=.001;
                 return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
                 
             }else{
@@ -158,6 +158,11 @@ private:
         return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
     }
 
+    void move_boid (Boid& b, sf::Time elapsed){
+        b.position.x += b.velocity.x*elapsed.asSeconds();
+        b.position.y += b.velocity.y*elapsed.asSeconds();
+    }
+
 
     sf::Vector2f normalize (sf::Vector2f vector){
         double length = calc_length(vector);
@@ -169,7 +174,7 @@ private:
         return sf::Vector2f((b2.position.x - b1.position.x),(b2.position.y-b1.position.y));
     }
     
-    void seperation(Boid& b){
+    void seperation(Boid& b, sf::Time elapsed){
        //std::vector<Boid&> boids;
 
         for (Boid& n_boid : m_boids){
@@ -181,13 +186,20 @@ private:
                 double mag = calc_length(b.velocity);
                 sf::Vector2f norm_vel = normalize(b.velocity);
 
-                sf::Vector2f dir = normalize(calc_vector(n_boid, b));
+                sf::Vector2f dir = calc_vector(n_boid, b);
+
+                double new_x = std::lerp(b.velocity.x, dir.x, fade);
+                double new_y = std::lerp(b.velocity.y, dir.y, fade);
+                sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y));
+
+                //std::cout << "Mag: " << mag << " Dir x: " << static_cast<int>(dir.x) << " dir y: " << static_cast<int>(dir.y) << "\n";
+                
+                
+                b.velocity.x = new_v.x*mag;
+                b.velocity.y = new_v.y*mag;
+                move_boid(b, elapsed);
                 
 
-                std::cout << "Mag: " << mag << " Dir x: " << static_cast<int>(dir.x) << " dir y: " << static_cast<int>(dir.y) << "\n";
-                
-                b.velocity.x = std::lerp(norm_vel.x, dir.x, fade)*mag;
-                b.velocity.y = std::lerp(norm_vel.y, dir.y, fade)*mag;
             }
         }
         
