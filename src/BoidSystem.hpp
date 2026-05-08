@@ -10,7 +10,7 @@ class BoidSystem : public sf::Drawable, public sf::Transformable
 {
 
 public:
-    BoidSystem(unsigned int count, int x, int y) : m_boids(count*3), m_vertices(sf::PrimitiveType::Triangles, count*3), m_width(x), m_height(y)
+    BoidSystem(unsigned int count, int x, int y) : m_boids(count), m_vertices(sf::PrimitiveType::Triangles, count*3), m_width(x), m_height(y)
     {
         SpawnBoids(count, x , y);
     }
@@ -28,8 +28,8 @@ public:
             
             //apply boid forces
             seperation(b, elapsed);
-            //alignment
-            //cohesion
+            alignment(b, elapsed);
+            attract(b, elapsed);
 
             // update the position of the corresponding vertex
             m_boids[i].position.x += b.velocity.x * elapsed.asSeconds();
@@ -54,9 +54,6 @@ private:
         // draw the vertex array
         target.draw(m_vertices, states);
     }
-
-
-
 
         struct Boid
     {
@@ -121,7 +118,6 @@ private:
             m_boids[b.id].position.y += b.velocity.y * elapsed.asSeconds();
             b.hit = 1.f;
         }
-
     }
 
     sf::Color collision_tint(Boid& b){
@@ -143,11 +139,6 @@ private:
             }
     }
 
-    
-    void forces(){
-        //write function to update pos, vel, etc
-        //write helper functions for this
-    }
 
     double distance(sf::Vector2f pos1, sf::Vector2f pos2){
         double dist = sqrt(::pow((pos2.x - pos1.x),2) + std::pow((pos2.y - pos1.y),2));
@@ -170,48 +161,139 @@ private:
 
     }
 
-    sf::Vector2f calc_vector(Boid& b1, Boid& b2){
-        return sf::Vector2f((b2.position.x - b1.position.x),(b2.position.y-b1.position.y));
+    sf::Vector2f calc_vector(sf::Vector2f b1, sf::Vector2f b2){
+        return sf::Vector2f((b2.x - b1.x),(b2.y-b1.y));
     }
     
     void seperation(Boid& b, sf::Time elapsed){
-       //std::vector<Boid&> boids;
 
         for (Boid& n_boid : m_boids){
             double dist = distance(b.position,n_boid.position);
-            if(dist<search_dist and n_boid.id != b.id){
-               // boids.push_back(boid);
+            if(dist<seperation_dist and n_boid.id != b.id){
 
-                double fade = (search_dist-dist)/search_dist;
+               //determine fade effect based on distance
+                double fade = (seperation_dist-dist)/seperation_dist;
+
+                //calculate speed of current vel
                 double mag = calc_length(b.velocity);
-                sf::Vector2f norm_vel = normalize(b.velocity);
+                double n_mag = calc_length(n_boid.velocity);
+                double new_mag = std::lerp(mag,n_mag,fade);
+                
+                //determine collision vector
+                sf::Vector2f dir = calc_vector(n_boid.position, b.position);
 
-                sf::Vector2f dir = calc_vector(n_boid, b);
-
+                //calculate new velocity
                 double new_x = std::lerp(b.velocity.x, dir.x, fade);
                 double new_y = std::lerp(b.velocity.y, dir.y, fade);
-                sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y));
 
-                //std::cout << "Mag: " << mag << " Dir x: " << static_cast<int>(dir.x) << " dir y: " << static_cast<int>(dir.y) << "\n";
+                //normalize new vel
+                sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y));
                 
-                
-                b.velocity.x = new_v.x*mag;
-                b.velocity.y = new_v.y*mag;
+                //assign new vel multiply by magnitude of old vel
+                b.velocity.x = new_v.x*new_mag;
+                b.velocity.y = new_v.y*new_mag;
+
+                //nudge boid in new direction
                 move_boid(b, elapsed);
-                
 
             }
         }
-        
-
     }
 
-    void alignment(Boid& b){
-        
+    void alignment(Boid& b,  sf::Time elapsed){
+         for (Boid& n_boid : m_boids){
+            double dist = distance(b.position,n_boid.position);
+
+            if(dist<align_dist and n_boid.id != b.id){
+                //determine fade effect based on distance
+                double fade = (align_dist-dist)/(align_dist);       
+                
+                //calculate speed of current vel
+                double mag = calc_length(b.velocity);
+
+                //calculate new velocity
+                double new_x = std::lerp(b.velocity.x, n_boid.velocity.x, fade);
+                double new_y = std::lerp(b.velocity.y, n_boid.velocity.y, fade);
+
+                //normalize new vel
+                sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y));
+                
+                //assign new vel multiply by magnitude of old vel
+                b.velocity.x = new_v.x*mag;
+                b.velocity.y = new_v.y*mag;
+
+                //nudge boid in new direction
+                move_boid(b, elapsed);
+
+            }
+        }   
     }
 
-    void cohesion(Boid& b){
-        
+    void attract(Boid& b, sf::Time elapsed){
+
+        std::vector<Boid> boids;
+        sf::Vector2f attractor;
+
+        for (Boid& n_boid : m_boids){
+            double dist = distance(b.position,n_boid.position);
+            if(dist<attract_dist and n_boid.id != b.id){
+
+                //make list of boids neighbouring boids
+                boids.push_back(n_boid);
+              //  std::cout << "adding " << n_boid.id << " to the list \n"; 
+            }   
+        }   
+
+        //check if any neighbouring boids found
+        if (boids.size() > 1){
+
+            //number of neighbouring boids
+            int length = boids.size();
+            //std::cout << length << " boids in list \n"; 
+
+            double av_x = 0.f;
+            double av_y = 0.f;
+
+            //add up all x and y positions of the neighbouring boids
+            for(Boid boid : boids){
+                av_x += boid.position.x;
+                av_y += boid.position.y;
+            }
+
+            //average out positions by dividing by the number of boids
+            av_x = av_x/length;
+            av_y = av_y/length;
+
+            //std::cout << av_x << " = average x position " << av_y << " = average y position \n"; 
+
+            //mean position of surrounding boids
+            attractor = sf::Vector2f(av_x,av_y);
+
+            //calculate scalar distance to attractor
+            double dist = distance(b.position,attractor);
+
+            //determine fade effect based on distance
+            double fade = (attract_dist-(dist))/(attract_dist);       
+            
+            //calculate speed of current vel
+            double mag = calc_length(b.velocity);
+
+            sf::Vector2f attract_vector = calc_vector(b.position, attractor);
+
+            //calculate new velocity
+            double new_x = std::lerp(b.velocity.x, attract_vector.x, .01);
+            double new_y = std::lerp(b.velocity.y, attract_vector.y, .01);
+
+            //normalize new vel
+            sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y));
+            
+            //assign new vel multiply by magnitude of old vel
+            b.velocity.x = new_v.x*mag;
+            b.velocity.y = new_v.y*mag;
+
+            //nudge boid in new direction
+            move_boid(b, elapsed);
+        }
     }
 
 
@@ -254,10 +336,6 @@ private:
             //add random greyscale color
             int color = colorDist(rng);
 
-            // std::cout << "Boid " << i
-            // << " color: "
-            // << color << '\n';
-
             //unsigned int color = 255;
             b.color = sf::Color(color,color,color);
             
@@ -271,7 +349,9 @@ private:
     unsigned int m_width;
     unsigned int m_height;
     double size = 5;
-    double search_dist = 5;
+    double seperation_dist = 8;
+    double align_dist = 15;
+    double attract_dist = 50;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };

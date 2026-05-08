@@ -8,3 +8,6 @@ optimize neighbour search by creating cell structure
 remove self from neighbour search
 
 calculate triangle size based on normalized velocity vector, or some scaling factor randomly created at generation, b.size?
+
+
+calculate all the vel vectors up per frame, average them, then apply them
