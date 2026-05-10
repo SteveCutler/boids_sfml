@@ -11,3 +11,7 @@ calculate triangle size based on normalized velocity vector, or some scaling fac
 
 
 calculate all the vel vectors up per frame, average them, then apply them
+
+write visual debugger to display velocity vectors of the boids
+
+fix float/double mismatch
