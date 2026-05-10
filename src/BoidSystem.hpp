@@ -29,9 +29,9 @@ public:
             collision_detect(b, elapsed);
             
             //apply boid forces
-            //force_vel = seperation(b, elapsed);
+            force_vel = seperation(b, elapsed);  
             //force_vel += alignment(b, elapsed);
-            force_vel += attract(b, elapsed);
+            //force_vel += attract(b, elapsed);
 
             //master fade control on forces
             force_vel.x = std::lerp(0.f,force_vel.x,force_strength);
@@ -151,12 +151,12 @@ private:
 
     // HELPERS
 
-    double distance(sf::Vector2f pos1, sf::Vector2f pos2){
-        double dist = sqrt(::pow((pos2.x - pos1.x),2) + std::pow((pos2.y - pos1.y),2));
+    float distance(sf::Vector2f pos1, sf::Vector2f pos2){
+        float dist = sqrt(::pow((pos2.x - pos1.x),2) + std::pow((pos2.y - pos1.y),2));
         return dist;
     }
 
-    double calc_length(sf::Vector2f vector){
+    float calc_length(sf::Vector2f vector){
         return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
     }
 
@@ -179,25 +179,22 @@ private:
     // FORCES
 
     sf::Vector2f seperation(Boid& b, sf::Time elapsed){
-
+        sf::Vector2f seperation_force = sf::Vector2f(0.f,0.f);
         for (Boid& n_boid : m_boids){
             float dist = distance(b.position,n_boid.position);
-            if(dist<seperation_dist and n_boid.id != b.id){
+            if(dist < seperation_dist and n_boid.id != b.id){
+
+                std::cout << "boid too close \n"; 
 
                //determine fade effect based on distance
-                float fade = (seperation_dist-dist)/seperation_dist;
+                float fade = std::clamp( seperation_dist-(dist) ,0.001f,seperation_dist)/seperation_dist;
                 
                 //determine collision vector
-                sf::Vector2f dir = normalize(calc_vector(n_boid.position, b.position))*fade;
-
-                return dir;
+                seperation_force += calc_vector(n_boid.position, b.position)*fade;
             }
-            else{
-                return b.velocity;
-            }
-            return b.velocity;
         }
-        return b.velocity;
+        normalize(seperation_force);
+        return seperation_force;
     }
 
     sf::Vector2f alignment(Boid& b,  sf::Time elapsed){
@@ -217,9 +214,9 @@ private:
 
                 return new_v;
             }
-            return b.velocity;
+            return sf::Vector2f(0.f, 0.f);
         }   
-
+         return sf::Vector2f(0.f, 0.f);
     }
 
     sf::Vector2f attract(Boid& b, sf::Time elapsed){
@@ -265,7 +262,7 @@ private:
             float fade = std::clamp( attract_dist-(dist) ,0.001f,attract_dist)/attract_dist;       
             
 
-            sf::Vector2f attract_vector = normalize(calc_vector(b.position, attractor)) * fade;
+            sf::Vector2f attract_vector = calc_vector(b.position, attractor) * fade;
 
             return attract_vector;
         }
@@ -327,11 +324,11 @@ private:
 
     unsigned int m_width;
     unsigned int m_height;
-    float force_strength = .01;
+    float force_strength = .5;
     float size = 5;
     //Force control
-    float seperation_dist = 8;
-    float align_dist = 15;
+    float seperation_dist = 10;
+    float align_dist = 25;
     float attract_dist = 50;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
