@@ -29,9 +29,9 @@ public:
             collision_detect(b, elapsed);
             
             //apply boid forces
-            force_vel = seperation(b, elapsed);  
-            //force_vel += alignment(b, elapsed);
-            //force_vel += attract(b, elapsed);
+            //force_vel = seperation(b, elapsed);  
+            force_vel += alignment(b, elapsed);
+            //force_vel += attract(b, elapsed) * attract_master;
 
             //master fade control on forces
             force_vel.x = std::lerp(0.f,force_vel.x,force_strength);
@@ -190,7 +190,7 @@ private:
                 float fade = std::clamp( seperation_dist-(dist) ,0.001f,seperation_dist)/seperation_dist;
                 
                 //determine collision vector
-                seperation_force += calc_vector(n_boid.position, b.position)*fade;
+                seperation_force += normalize(calc_vector(n_boid.position, b.position))*fade;
             }
         }
         normalize(seperation_force);
@@ -198,6 +198,8 @@ private:
     }
 
     sf::Vector2f alignment(Boid& b,  sf::Time elapsed){
+        sf::Vector2f align_force = sf::Vector2f(0.f,0.f);
+
          for (Boid& n_boid : m_boids){
             float dist = distance(b.position,n_boid.position);
 
@@ -210,13 +212,13 @@ private:
                 float new_y = std::lerp(b.velocity.y, n_boid.velocity.y, .5);
 
                 //create new vel vector
-                sf::Vector2f new_v = normalize(sf::Vector2f(new_x, new_y))*fade;
+                align_force += normalize(sf::Vector2f(new_x, new_y))*fade;
 
-                return new_v;
+               
             }
-            return sf::Vector2f(0.f, 0.f);
+            
         }   
-         return sf::Vector2f(0.f, 0.f);
+        return align_force;
     }
 
     sf::Vector2f attract(Boid& b, sf::Time elapsed){
@@ -328,8 +330,11 @@ private:
     float size = 5;
     //Force control
     float seperation_dist = 10;
+
     float align_dist = 25;
-    float attract_dist = 50;
+
+    float attract_dist = 35;
+    float attract_master = .1;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };
