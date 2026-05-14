@@ -12,7 +12,7 @@ int main()
 
     
     // create the boid system
-    BoidSystem boids(100, x_max, y_max);
+    BoidSystem boids(200, x_max, y_max);
 
     // create a clock to track the elapsed time
     sf::Clock clock;

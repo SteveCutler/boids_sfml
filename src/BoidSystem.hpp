@@ -29,9 +29,9 @@ public:
             collision_detect(b, elapsed);
             
             //apply boid forces
-            //force_vel = seperation(b, elapsed);  
-            force_vel += alignment(b, elapsed);
-            //force_vel += attract(b, elapsed) * attract_master;
+            force_vel = seperation(b, elapsed);  
+            force_vel += alignment(b, elapsed) * align_master;
+            force_vel += attract(b, elapsed) * attract_master;
 
             //master fade control on forces
             force_vel.x = std::lerp(0.f,force_vel.x,force_strength);
@@ -39,12 +39,15 @@ public:
 
 
             //adding new force vector to velocity
-            b.velocity.x += force_vel.x;
-            b.velocity.y += force_vel.y;
+            b.velocity.x += force_vel.x*b.scale * master_force;
+            b.velocity.y += force_vel.y*b.scale * master_force;
 
             // update the position of the corresponding vertex
             m_boids[i].position.x += b.velocity.x * elapsed.asSeconds();
             m_boids[i].position.y += b.velocity.y * elapsed.asSeconds();
+
+            b.velocity.x = std::clamp(b.velocity.x, -vel_clamp,vel_clamp);
+            b.velocity.y = std::clamp(b.velocity.y, -vel_clamp,vel_clamp);
 
             //render boids as triangles
             create_tris(b);
@@ -199,26 +202,31 @@ private:
 
     sf::Vector2f alignment(Boid& b,  sf::Time elapsed){
         sf::Vector2f align_force = sf::Vector2f(0.f,0.f);
-
+        float counter = 0.f;
+        float fade = 1.f;
          for (Boid& n_boid : m_boids){
             float dist = distance(b.position,n_boid.position);
+            
 
             if(dist<align_dist and n_boid.id != b.id){
                 //determine fade effect based on distance
-                float fade = (align_dist-dist)/(align_dist);       
+                fade = 1-(std::clamp((align_dist-dist) ,0.001f,align_dist)/(align_dist));       
 
                 //calculate new velocity
-                float new_x = std::lerp(b.velocity.x, n_boid.velocity.x, .5);
-                float new_y = std::lerp(b.velocity.y, n_boid.velocity.y, .5);
+                float new_x = std::lerp(b.velocity.x, n_boid.velocity.x, fade);
+                float new_y = std::lerp(b.velocity.y, n_boid.velocity.y, fade);
 
                 //create new vel vector
                 align_force += normalize(sf::Vector2f(new_x, new_y))*fade;
-
-               
+                counter+=1;
             }
-            
+        }
+        if(counter>0.f){
+            return (align_force/counter)*fade;
         }   
-        return align_force;
+        else{
+            return align_force;
+        }
     }
 
     sf::Vector2f attract(Boid& b, sf::Time elapsed){
@@ -236,7 +244,7 @@ private:
         }   
 
         //check if any neighbouring boids were found
-        if (boids.size() > 1){
+        if (boids.size() > 0){
 
             //number of neighbouring boids
             int length = boids.size();
@@ -297,7 +305,7 @@ private:
 
             //give random birth vel and angle to boid
             const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
-            const float     speed       = std::uniform_real_distribution(5.f, 10.f)(rng);
+            const float  speed       = std::uniform_real_distribution(5.f, 10.f)(rng);
 
             // convert angle and speed into vel
             double vx = std::cos(angle)*speed;
@@ -329,12 +337,17 @@ private:
     float force_strength = .5;
     float size = 5;
     //Force control
-    float seperation_dist = 10;
+    float seperation_dist = 15;
 
-    float align_dist = 25;
+    float align_dist = 50;
+    float align_master = .2;
 
-    float attract_dist = 35;
-    float attract_master = .1;
+    float attract_dist = 55;
+    float attract_master = .15;
+
+    float vel_clamp = 120.0;
+
+    float master_force = 1.3;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
 };
