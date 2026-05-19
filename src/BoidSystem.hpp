@@ -143,7 +143,7 @@ private:
 
                // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
 
-                b.hit -=.001;
+                b.hit -=.005;
                 return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
                 
             }else{
@@ -181,14 +181,16 @@ private:
     
     // FORCES
 
+
+
+    // SEPERATE
     sf::Vector2f seperation(Boid& b, sf::Time elapsed){
         sf::Vector2f seperation_force = sf::Vector2f(0.f,0.f);
         for (Boid& n_boid : m_boids){
             float dist = distance(b.position,n_boid.position);
             if(dist < seperation_dist and n_boid.id != b.id){
 
-                std::cout << "boid too close \n"; 
-
+               
                //determine fade effect based on distance
                 float fade = std::clamp( seperation_dist-(dist) ,0.001f,seperation_dist)/seperation_dist;
                 
@@ -196,10 +198,11 @@ private:
                 seperation_force += normalize(calc_vector(n_boid.position, b.position))*fade;
             }
         }
-        normalize(seperation_force);
+       // seperation_force =  normalize(seperation_force);
         return seperation_force;
     }
 
+    // ALIGN
     sf::Vector2f alignment(Boid& b,  sf::Time elapsed){
         sf::Vector2f align_force = sf::Vector2f(0.f,0.f);
         float counter = 0.f;
@@ -228,6 +231,8 @@ private:
             return align_force;
         }
     }
+
+    // ATTRACT
 
     sf::Vector2f attract(Boid& b, sf::Time elapsed){
 
@@ -305,14 +310,17 @@ private:
 
             //give random birth vel and angle to boid
             const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
-            const float  speed       = std::uniform_real_distribution(5.f, 10.f)(rng);
+            float radians = angle * (M_PI/ 180.f);
+            const float  speed       = std::uniform_real_distribution(10.f, 1.f)(rng);
+            
 
             // convert angle and speed into vel
-            double vx = std::cos(angle)*speed;
-            double vy = std::sin(angle)*speed;
+            double vx = std::cos(radians)*speed;
+            double vy = std::sin(radians)*speed;
             b.velocity = sf::Vector2f(vx, vy);
 
-            //add random color
+            //add random color option
+
             // unsigned int red = colorDist(rng);
             // unsigned int green = colorDist(rng);
             // unsigned int blue = colorDist(rng);
@@ -339,10 +347,10 @@ private:
     //Force control
     float seperation_dist = 15;
 
-    float align_dist = 50;
-    float align_master = .2;
+    float align_dist = 55;
+    float align_master = .3;
 
-    float attract_dist = 55;
+    float attract_dist = 50;
     float attract_master = .15;
 
     float vel_clamp = 120.0;

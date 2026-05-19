@@ -1,17 +1,17 @@
+TO DO
 
-add boid rules
 correct collision for boid size, global variable
 add collision objects
     create collision point list? that way I can say if new pos in collision area reverse, which i thin k is O(1)
 
 optimize neighbour search by creating cell structure
-remove self from neighbour search
-
-calculate triangle size based on normalized velocity vector, or some scaling factor randomly created at generation, b.size?
-
-
-calculate all the vel vectors up per frame, average them, then apply them
 
 write visual debugger to display velocity vectors of the boids
 
-fix float/double mismatch
+replace pow with x * x for performance
+
+Add performance metric overlays
+Optimize performance in iterations
+
+** write safer font code
+** hardcoded font file
