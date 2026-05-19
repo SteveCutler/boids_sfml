@@ -236,36 +236,34 @@ private:
 
     sf::Vector2f attract(Boid& b, sf::Time elapsed){
 
-        std::vector<Boid> boids;
+        
+       // std::vector<Boid> boids;
+        float sumX = 0.f;
+        float sumY = 0.f;
+        std::size_t count = 0;
+
         sf::Vector2f attractor;
 
         for (Boid& n_boid : m_boids){
             double dist = distance(b.position,n_boid.position);
             if(dist<attract_dist and n_boid.id != b.id){
 
-                //make list of boids neighbouring boids
-                boids.push_back(n_boid);
+                //loop through neighbouring boids and if close enough add their position to the sums
+                sumX += n_boid.position.x;
+                sumY += n_boid.position.y;
+                count ++;
             }   
         }   
 
-        //check if any neighbouring boids were found
-        if (boids.size() > 0){
-
-            //number of neighbouring boids
-            int length = boids.size();
+        //check if any close neighbouring boids were found
+        if (count > 0){
 
             float av_x = 0.f;
             float av_y = 0.f;
 
-            //add up all x and y positions of the neighbouring boids
-            for(Boid boid : boids){
-                av_x += boid.position.x;
-                av_y += boid.position.y;
-            }
-
             //average out positions by dividing by the number of boids
-            av_x = av_x/length;
-            av_y = av_y/length;
+            av_x = sumX/count;
+            av_y = sumY/count;
 
             //mean position of surrounding boids
             attractor = sf::Vector2f(av_x,av_y);
@@ -275,7 +273,6 @@ private:
 
             //determine fade effect based on distance, clamp above 0
             float fade = std::clamp( attract_dist-(dist) ,0.001f,attract_dist)/attract_dist;       
-            
 
             sf::Vector2f attract_vector = calc_vector(b.position, attractor) * fade;
 

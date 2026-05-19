@@ -5,10 +5,13 @@
 
 int main()
 {
-
+    //SET BOID COUNT
     unsigned int boidCount = 400;
+
+    //SET WIDTH AND HEIGHT
     unsigned int x_max = 512;
     unsigned int y_max = 256;
+
     // create the window
     sf::RenderWindow window(sf::VideoMode({x_max, y_max}), "Boids");
 
