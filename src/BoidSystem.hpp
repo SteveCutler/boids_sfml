@@ -10,13 +10,23 @@ class BoidSystem : public sf::Drawable, public sf::Transformable
 {
 
 public:
-    BoidSystem(unsigned int count, int x, int y) : m_boids(count), m_vertices(sf::PrimitiveType::Triangles, count*3), m_width(x), m_height(y)
+    BoidSystem(unsigned int count, int x, int y, std::size_t cell_size, std::size_t grid_width, std::size_t grid_height):
+    m_boids(count), 
+    m_vertices(sf::PrimitiveType::Triangles, count*3), 
+    m_width(x), 
+    m_height(y),
+    m_grid_width(grid_width),
+    m_grid_height(grid_height), 
+    m_cell_num(grid_width * grid_height), 
+    m_grid_cells(m_cell_num),
+    m_cell_size(cell_size)
     {
         SpawnBoids(count, x , y);
     }
 
     void update(sf::Time elapsed)
     {
+        
         
         for (std::size_t i = 0; i < m_boids.size(); ++i)
         {
@@ -27,6 +37,29 @@ public:
 
             //collision check
             collision_detect(b, elapsed);
+
+
+            /*
+            //Cell Grid Helpers
+            clear_grid()
+            build_grid()
+            
+            */
+
+            /*
+            
+            //IN FORCES
+            
+            get_cell_coords()
+            get_cell_index()
+            get_neighboring_cells()
+            compute_separation()
+            compute_alignment()
+            compute_cohesion()
+
+            */
+
+            
             
             //apply boid forces
             force_vel = seperation(b, elapsed);  
@@ -154,10 +187,59 @@ private:
 
     // HELPERS
 
+    
+    std::size_t calc_cell(Boid& b){
+        std::size_t cell_x = (b.position.x/m_cell_size);
+        std::size_t cell_y = (b.position.y/m_cell_size);
+
+        std::size_t cell_num = cell_y*m_grid_width+cell_x;
+
+        return cell_num;
+    }
+
+    void clear_grid(){
+        for(auto& cell : m_grid_cells){
+            cell.clear();
+        }
+    }
+    
+    void build_grid(){
+        for (Boid& boid : m_boids){
+            size_t cell = calc_cell(boid);
+            m_grid_cells[cell].push_back(boid.id);
+        }     
+    }
+
+    std::pair<size_t, size_t> retrieve_coords(size_t cell_num){
+        size_t x = cell_num % m_grid_width;
+        size_t y = cell_num / m_grid_width;
+
+        return std::pair(x,y);
+    }
+
+    std::vector<size_t> retrieve_neighbours(size_t cell_num){
+        std::pair<size_t, size_t> coords = retrieve_coords(cell_num);
+        std::vector<size_t> n_boids;
+
+        for (int x = coords.first-1; x<=coords.first+1; x++){
+            for(int y = coords.second-1; y<=coords.second+1; y++){
+                size_t cell = y*m_grid_width+x;
+                if(!empty(m_grid_cells[cell])){
+                    for(auto& num : m_grid_cells[cell])
+                        n_boids.push_back(num);
+                }
+            }
+        }
+        return n_boids;
+    }
+
+
+
     float distance(sf::Vector2f pos1, sf::Vector2f pos2){
         float dist = sqrt(::pow((pos2.x - pos1.x),2) + std::pow((pos2.y - pos1.y),2));
         return dist;
     }
+
 
     float calc_length(sf::Vector2f vector){
         return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
@@ -355,4 +437,9 @@ private:
     float master_force = 1.3;
     std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
+    std::size_t m_cell_num;
+    std::vector<std::vector<std::size_t>> m_grid_cells;
+    std::size_t m_grid_width;
+    std::size_t m_grid_height;
+    std::size_t m_cell_size;
 };

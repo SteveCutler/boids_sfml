@@ -16,3 +16,13 @@ Optimize performance in iterations
 ** write safer font code
 ** hardcoded font file
 
+Implement cell grid search structure:
+Instatiate grid vector at startup,
+
+each frame:
+
+1. Clear grid
+2. Rebuild grid from current boid positions
+3. Calculate forces using grid
+4. Move boids
+5. Render

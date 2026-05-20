@@ -12,6 +12,11 @@ int main()
     unsigned int x_max = 512;
     unsigned int y_max = 256;
 
+    //CELL VARIABLES
+    std::size_t cell_size = 64;
+    std::size_t grid_width = ceil(static_cast<float>(x_max)/64);
+    std::size_t grid_height = ceil(static_cast<float>(y_max)/64);
+
     // create the window
     sf::RenderWindow window(sf::VideoMode({x_max, y_max}), "Boids");
 
@@ -35,7 +40,7 @@ int main()
     boidText.setPosition({5.f, 35.f});
     
     // create the boid system
-    BoidSystem boids(boidCount, x_max, y_max);
+    BoidSystem boids(boidCount, x_max, y_max, cell_size, grid_width, grid_height);
 
     // create a clock to track the elapsed time
     sf::Clock clock;
