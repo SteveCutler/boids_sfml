@@ -177,6 +177,7 @@ private:
     }
 
     // HELPERS
+    
 
     
     std::size_t calc_cell(Boid& b){
