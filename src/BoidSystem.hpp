@@ -90,15 +90,6 @@ private:
         target.draw(m_vertices, states);
     }
 
-        struct Boid
-    {
-        int id;
-        sf::Vector2f velocity;
-        sf::Vector2f position;
-        sf::Color color;
-        float hit;
-        float scale;
-    };
     
         void create_tris(sf::Time elapsed){
         sf::Vector2f point1;
@@ -154,12 +145,12 @@ private:
 
         if ( x_delta > m_width or x_delta < 0){
             m_boid_vel_x[i] *= -1;
-            //m_boids[b.id].position.x += b.velocity.x * elapsed.asSeconds();
+            m_boid_pos_x[i] += m_boid_vel_x[i] * elapsed.asSeconds();
             m_hit[i] = 1.f;
         }
         if ( y_delta > m_height or y_delta < 0){
             m_boid_vel_y[i] *= -1;
-            //m_boids[b.id].position.y += b.velocity.y * elapsed.asSeconds();
+            m_boid_pos_y[i] += m_boid_vel_y[i] * elapsed.asSeconds();
             m_hit[i] = 1.f;
         }
     }
@@ -189,9 +180,9 @@ private:
     
     std::size_t calc_cell(size_t i){
         // calc x value by dividing the x pos by width of cell
-        std::size_t cell_x = (m_boid_pos_x[i]/m_cell_size);
+        std::size_t cell_x = std::clamp(static_cast<float>((m_boid_pos_x[i]/m_cell_size)),0.f,static_cast<float>(m_grid_width-1));
         // calc y value by dividing the y pos by height of cell
-        std::size_t cell_y = (m_boid_pos_y[i]/m_cell_size);
+        std::size_t cell_y = std::clamp(static_cast<float>((m_boid_pos_y[i]/m_cell_size)),0.f,static_cast<float>(m_grid_height-1));
 
         // multiply the height by the y index and then add the x index
         std::size_t cell_num = cell_y*m_grid_width+cell_x;
@@ -210,6 +201,7 @@ private:
         //loop through all boids and assign cell numbers
         for (std::size_t i = 0; i < m_boid_pos_x.size(); ++i){
             size_t cell = calc_cell(i);
+            //std::cout << "Cell num: " << cell << "\n";
             m_grid_cells[cell].push_back(i);
         }     
     }
@@ -282,10 +274,10 @@ private:
         return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
     }
 
-    void move_boid (Boid& b, sf::Time elapsed){
-        b.position.x += b.velocity.x*elapsed.asSeconds();
-        b.position.y += b.velocity.y*elapsed.asSeconds();
-    }
+    // void move_boid (Boid& b, sf::Time elapsed){
+    //     b.position.x += b.velocity.x*elapsed.asSeconds();
+    //     b.position.y += b.velocity.y*elapsed.asSeconds();
+    // }
 
 
     sf::Vector2f normalize (sf::Vector2f vector){
@@ -462,8 +454,8 @@ private:
             m_scale[i] = (std::uniform_real_distribution(0.6f, 1.1f)(rng));
 
             // give a random birth position to the boid
-            m_boid_pos_x[i] = std::uniform_real_distribution(0.f, static_cast<float>(x))(rng);
-            m_boid_pos_y[i] = std::uniform_real_distribution(0.f, static_cast<float>(y))(rng);
+            m_boid_pos_x[i] = std::uniform_real_distribution(3.f, static_cast<float>(x-3))(rng);
+            m_boid_pos_y[i] = std::uniform_real_distribution(3.f, static_cast<float>(y-3))(rng);
 
             //give random birth vel and angle to boid
             const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
