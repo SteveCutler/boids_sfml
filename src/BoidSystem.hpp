@@ -11,7 +11,13 @@ class BoidSystem : public sf::Drawable, public sf::Transformable
 
 public:
     BoidSystem(unsigned int count, int x, int y, std::size_t cell_size, std::size_t grid_width, std::size_t grid_height):
-    m_boids(count), 
+    m_boid_pos_x(count),
+    m_boid_pos_y(count),
+    m_boid_vel_x(count),
+    m_boid_vel_y(count),
+    m_color(count),
+    m_hit(count),
+    m_scale(count),
     m_vertices(sf::PrimitiveType::Triangles, count*3), 
     m_width(x), 
     m_height(y),
@@ -32,23 +38,23 @@ public:
             std::vector<size_t>n_boids;
         
         
-        for (std::size_t i = 0; i < m_boids.size(); ++i)
+        for (std::size_t i = 0; i < m_boid_pos_x.size(); ++i)
         {
             sf::Vector2f force_vel = sf::Vector2f(0.f,0.f);
 
-            Boid& b = m_boids[i];
 
 
-            //calculate cell
-            size_t cell = calc_cell(b);
+            //calculate cell - passing index
+            size_t cell = calc_cell(i);
+
             //find neighbours
             n_boids = retrieve_neighbours(cell);
 
                     
             //apply boid forces
-            force_vel = seperation(b, elapsed, n_boids);  
-            force_vel += alignment(b, elapsed, n_boids) * align_master;
-            force_vel += attract(b, elapsed, n_boids) * attract_master;
+            force_vel = seperation(i, elapsed, n_boids);  
+            force_vel += alignment(i, elapsed, n_boids) * align_master;
+            force_vel += attract(i, elapsed, n_boids) * attract_master;
 
             //master fade control on forces
             force_vel.x = std::lerp(0.f,force_vel.x,force_strength);
@@ -56,14 +62,14 @@ public:
 
 
             //adding new force vector to velocity
-            b.velocity.x += force_vel.x*b.scale * master_force;
-            b.velocity.y += force_vel.y*b.scale * master_force;
+            m_boid_vel_x[i] += force_vel.x*m_scale[i] * master_force;
+            m_boid_vel_y[i] += force_vel.y*m_scale[i] * master_force;
 
-            b.velocity.x = std::clamp(b.velocity.x, -vel_clamp,vel_clamp);
-            b.velocity.y = std::clamp(b.velocity.y, -vel_clamp,vel_clamp);
+            m_boid_vel_x[i] = std::clamp(m_boid_vel_x[i], -vel_clamp,vel_clamp);
+            m_boid_vel_y[i] = std::clamp(m_boid_vel_y[i], -vel_clamp,vel_clamp);
 
             //collision check
-            collision_detect(b, elapsed);
+            collision_detect(i, elapsed);
 
             //render boids as triangles
             
@@ -90,8 +96,8 @@ private:
         sf::Vector2f velocity;
         sf::Vector2f position;
         sf::Color color;
-        double hit;
-        double scale;
+        float hit;
+        float scale;
     };
     
         void create_tris(sf::Time elapsed){
@@ -101,31 +107,32 @@ private:
         sf::Vector2f vel_cross;
         sf::Color color;
         
-        for (Boid& b :m_boids){
+        for (std::size_t i = 0; i < m_boid_pos_x.size(); ++i){
 
             // update the position of the corresponding vertex
-            b.position.x += b.velocity.x * elapsed.asSeconds();
-            b.position.y += b.velocity.y * elapsed.asSeconds();
+            m_boid_pos_x[i] += m_boid_vel_x[i] * elapsed.asSeconds();
+            m_boid_pos_y[i] += m_boid_vel_y[i] * elapsed.asSeconds();
             
-            sf::Vector2f norm_vel = normalize(b.velocity);
+            sf::Vector2f vel = sf::Vector2f(m_boid_vel_x[i],m_boid_vel_y[i]);
+            sf::Vector2f norm_vel = normalize(vel);
 
-            int point_id = (b.id)*3;
+            int point_id = (i)*3;
     
-            color = collision_tint(b);
+            color = collision_tint(i);
             
             vel_cross.x = norm_vel.y * -1;
             vel_cross.y = norm_vel.x;
             
             
             //write helper function for triangle
-            point1.x = b.position.x + (norm_vel.x * size * b.scale);
-            point1.y = b.position.y + (norm_vel.y * size)* b.scale;
+            point1.x = m_boid_pos_x[i] + (norm_vel.x * size * m_scale[i]);
+            point1.y = m_boid_pos_y[i] + (norm_vel.y * size)* m_scale[i];
     
-            point2.x = b.position.x + vel_cross.x * (size*0.5*b.scale);
-            point2.y = b.position.y + vel_cross.y * (size*0.5*b.scale);
+            point2.x = m_boid_pos_x[i] + vel_cross.x * (size*0.5*m_scale[i]);
+            point2.y = m_boid_pos_y[i] + vel_cross.y * (size*0.5*m_scale[i]);
     
-            point3.x = b.position.x - vel_cross.x * (size*0.5*b.scale);
-            point3.y = b.position.y - vel_cross.y * (size*0.5*b.scale);
+            point3.x = m_boid_pos_x[i] - vel_cross.x * (size*0.5*m_scale[i]);
+            point3.y = m_boid_pos_y[i] - vel_cross.y * (size*0.5*m_scale[i]);
     
             //create 3 points of triangle
             m_vertices[point_id].position = point1;
@@ -141,50 +148,50 @@ private:
     }
 
 
-    void collision_detect(Boid& b, sf::Time elapsed){
-        double x_delta = b.position.x + (b.velocity.x * elapsed.asSeconds());
-        double y_delta = b.position.y + (b.velocity.y * elapsed.asSeconds());
+    void collision_detect(size_t i, sf::Time elapsed){
+        double x_delta = m_boid_pos_x[i] + (m_boid_vel_x[i] * elapsed.asSeconds());
+        double y_delta = m_boid_pos_y[i] + (m_boid_pos_y[i] * elapsed.asSeconds());
 
         if ( x_delta > m_width or x_delta < 0){
-            b.velocity.x *= -1;
-            m_boids[b.id].position.x += b.velocity.x * elapsed.asSeconds();
-            b.hit = 1.f;
+            m_boid_vel_x[i] *= -1;
+            //m_boids[b.id].position.x += b.velocity.x * elapsed.asSeconds();
+            m_hit[i] = 1.f;
         }
         if ( y_delta > m_height or y_delta < 0){
-            b.velocity.y *= -1;
-            m_boids[b.id].position.y += b.velocity.y * elapsed.asSeconds();
-            b.hit = 1.f;
+            m_boid_vel_y[i] *= -1;
+            //m_boids[b.id].position.y += b.velocity.y * elapsed.asSeconds();
+            m_hit[i] = 1.f;
         }
     }
 
-    sf::Color collision_tint(Boid& b){
+    sf::Color collision_tint(size_t i){
         //add color
-        int point_id = (b.id)*3;
-            if (b.hit>0.1){
-                double new_red = std::lerp(static_cast<float>(b.color.r), 255.f, b.hit);
-                double new_green = std::lerp(static_cast<float>(b.color.g), 0.f, b.hit);
-                double new_blue = std::lerp(static_cast<float>(b.color.b), 0.f, b.hit);
+        int point_id = (i)*3;
+            if (m_hit[i]>0.1){
+                double new_red = std::lerp(static_cast<float>(m_color[i].r), 255.f, m_hit[i]);
+                double new_green = std::lerp(static_cast<float>(m_color[i].g), 0.f, m_hit[i]);
+                double new_blue = std::lerp(static_cast<float>(m_color[i].b), 0.f, m_hit[i]);
 
                // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
 
-                b.hit -=.01;
+                m_hit[i] -=.01;
                 return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
                 
             }else{
                 // return normal color
-                return b.color;
+                return m_color[i];
             }
     }
 
     // HELPERS
-    
+
 
     
-    std::size_t calc_cell(Boid& b){
+    std::size_t calc_cell(size_t i){
         // calc x value by dividing the x pos by width of cell
-        std::size_t cell_x = (b.position.x/m_cell_size);
+        std::size_t cell_x = (m_boid_pos_x[i]/m_cell_size);
         // calc y value by dividing the y pos by height of cell
-        std::size_t cell_y = (b.position.y/m_cell_size);
+        std::size_t cell_y = (m_boid_pos_y[i]/m_cell_size);
 
         // multiply the height by the y index and then add the x index
         std::size_t cell_num = cell_y*m_grid_width+cell_x;
@@ -201,9 +208,9 @@ private:
     
     void build_grid(){
         //loop through all boids and assign cell numbers
-        for (Boid& boid : m_boids){
-            size_t cell = calc_cell(boid);
-            m_grid_cells[cell].push_back(boid.id);
+        for (std::size_t i = 0; i < m_boid_pos_x.size(); ++i){
+            size_t cell = calc_cell(i);
+            m_grid_cells[cell].push_back(i);
         }     
     }
 
@@ -248,11 +255,11 @@ private:
         return n_boids;
     }
 
-    std::vector<size_t> find_b_neighbours(Boid& b){
+    std::vector<size_t> find_b_neighbours(size_t i){
         std::vector<size_t> n_boids;
 
         //cell search logic
-        std::size_t cell = calc_cell(b);
+        std::size_t cell = calc_cell(i);
         std::vector<size_t> n_list = retrieve_neighbours(cell);
 
         return n_list;
@@ -296,7 +303,7 @@ private:
 
 
     // SEPERATE
-    sf::Vector2f seperation(Boid& b, sf::Time elapsed, std::vector<size_t> n_list){
+    sf::Vector2f seperation(size_t i, sf::Time elapsed, std::vector<size_t> n_list){
 
 
         //create empty sf vector
@@ -305,17 +312,23 @@ private:
         //check if any neighbours found in surrounding cells
         if (n_list.size()>1){
             for (size_t& n_boid : n_list){
-                
+
+                //boid pos
+                sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
+
+                // neighbouring boid pos
+                sf::Vector2f n_pos = sf::Vector2f(m_boid_pos_x[n_boid],m_boid_pos_y[n_boid]);
+
                 //distance check
-                float dist = distance(b.position,m_boids[n_boid].position);
-                if(dist < seperation_dist and n_boid != b.id){
+                float dist = distance(b_pos,n_pos);
+                if(dist < seperation_dist and n_boid != i){
     
                    
                    //determine fade effect based on distance
                     float fade = std::clamp( seperation_dist-(dist) ,0.001f,seperation_dist)/seperation_dist;
                     
                     //determine collision vector
-                    seperation_force += normalize(calc_vector(m_boids[n_boid].position, b.position))*fade;
+                    seperation_force += normalize(calc_vector(n_pos, b_pos))*fade;
                 }
             }
 
@@ -325,7 +338,7 @@ private:
     }
 
     // ALIGN
-    sf::Vector2f alignment(Boid& b,  sf::Time elapsed, std::vector<size_t> n_list){
+    sf::Vector2f alignment(size_t i,  sf::Time elapsed, std::vector<size_t> n_list){
       
         
         sf::Vector2f align_force = sf::Vector2f(0.f,0.f);
@@ -335,18 +348,23 @@ private:
         if (n_list.size()>1){
             for (size_t& n_boid : n_list){
                 
+                //boid pos
+                sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
 
-                float dist = distance(b.position,m_boids[n_boid].position);
+                // neighbouring boid pos
+                sf::Vector2f n_pos = sf::Vector2f(m_boid_pos_x[n_boid],m_boid_pos_y[n_boid]);
+
+                float dist = distance(b_pos,n_pos);
                 
 
-                if(dist<align_dist and n_boid != b.id){
+                if(dist<align_dist and n_boid != i){
                     
                     //determine fade effect based on distance
                     fade = 1-(std::clamp((align_dist-dist) ,0.001f,align_dist)/(align_dist));       
 
                     //calculate new velocity
-                    float new_x = std::lerp(b.velocity.x, m_boids[n_boid].velocity.x, fade);
-                    float new_y = std::lerp(b.velocity.y, m_boids[n_boid].velocity.y, fade);
+                    float new_x = std::lerp(m_boid_vel_x[i], m_boid_vel_x[n_boid], fade);
+                    float new_y = std::lerp(m_boid_vel_y[i],m_boid_vel_y[n_boid], fade);
 
                     //create new vel vector
                     align_force += normalize(sf::Vector2f(new_x, new_y))*fade;
@@ -364,7 +382,7 @@ private:
 
     // ATTRACT
 
-    sf::Vector2f attract(Boid& b, sf::Time elapsed, std::vector<size_t> n_list){
+    sf::Vector2f attract(size_t i, sf::Time elapsed, std::vector<size_t> n_list){
 
         
        // std::vector<Boid> boids;
@@ -374,15 +392,23 @@ private:
 
         sf::Vector2f attractor;
 
+         //boid pos
+        sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
+
         //check if any neighbours found in surrounding cells
         if (n_list.size()>1){
             for (size_t& n_boid : n_list){
-                double dist = distance(b.position,m_boids[n_boid].position);
-                if(dist<attract_dist and n_boid != b.id){
+
+
+                // neighbouring boid pos
+                sf::Vector2f n_pos = sf::Vector2f(m_boid_pos_x[n_boid],m_boid_pos_y[n_boid]);
+
+                double dist = distance(b_pos,n_pos);
+                if(dist<attract_dist and n_boid != i){
 
                     //loop through neighbouring boids and if close enough add their position to the sums
-                    sumX += m_boids[n_boid].position.x;
-                    sumY += m_boids[n_boid].position.y;
+                    sumX += m_boid_pos_x[n_boid];
+                    sumY += m_boid_pos_y[n_boid];
                     count ++;
                 }   
             }   
@@ -402,12 +428,12 @@ private:
             attractor = sf::Vector2f(av_x,av_y);
 
             //calculate scalar distance to attractor
-            float dist = distance(b.position,attractor);
+            float dist = distance(b_pos,attractor);
 
             //determine fade effect based on distance, clamp above 0
             float fade = std::clamp( attract_dist-(dist) ,0.001f,attract_dist)/attract_dist;       
 
-            sf::Vector2f attract_vector = calc_vector(b.position, attractor) * fade;
+            sf::Vector2f attract_vector = calc_vector(b_pos, attractor) * fade;
 
             return attract_vector;
         }
@@ -430,13 +456,14 @@ private:
 
         for (std::size_t i = 0; i < count; ++i){
 
-            Boid b;
-            b.id = i;
-            b.hit =0.f;
-            b.scale = (std::uniform_real_distribution(0.6f, 1.1f)(rng));
+            //i is boid index in all SoA vectors
+
+            m_hit[i] =0.f;
+            m_scale[i] = (std::uniform_real_distribution(0.6f, 1.1f)(rng));
 
             // give a random birth position to the boid
-            b.position = sf::Vector2f(std::uniform_real_distribution(0.f, static_cast<float>(x))(rng), std::uniform_real_distribution(0.f, static_cast<float>(y))(rng));
+            m_boid_pos_x[i] = std::uniform_real_distribution(0.f, static_cast<float>(x))(rng);
+            m_boid_pos_y[i] = std::uniform_real_distribution(0.f, static_cast<float>(y))(rng);
 
             //give random birth vel and angle to boid
             const double angle       = (std::uniform_real_distribution(0.f, 360.f)(rng));
@@ -447,7 +474,8 @@ private:
             // convert angle and speed into vel
             double vx = std::cos(radians)*speed;
             double vy = std::sin(radians)*speed;
-            b.velocity = sf::Vector2f(vx, vy);
+            m_boid_vel_x[i] = vx;
+            m_boid_vel_y[i] = vx;
 
             //add random color option
 
@@ -461,12 +489,11 @@ private:
             int color = colorDist(rng);
 
             //unsigned int color = 255;
-            b.color = sf::Color(color,color,color);
+            m_color[i] = sf::Color(color,color,color);
             
             // add point to boids and vertex array
-            m_boids[i] = b;
-            m_vertices[i].position = b.position;
-            m_vertices[i].color = b.color;
+            m_vertices[i].position = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
+            m_vertices[i].color = m_color[i];
         }
     }
 
@@ -486,11 +513,19 @@ private:
     float vel_clamp = 120.0;
 
     float master_force = 1.3;
-    std::vector<Boid>     m_boids;
     sf::VertexArray       m_vertices;
     std::size_t m_cell_num;
     std::vector<std::vector<std::size_t>> m_grid_cells;
     std::size_t m_grid_width;
     std::size_t m_grid_height;
     std::size_t m_cell_size;
+
+    //SOA members
+    std::vector<float>m_boid_pos_x;
+    std::vector<float>m_boid_pos_y;
+    std::vector<float>m_boid_vel_x;
+    std::vector<float>m_boid_vel_y;
+    std::vector<sf::Color>m_color;
+    std::vector<float>m_hit;
+    std::vector<float>m_scale;
 };
