@@ -38,8 +38,6 @@ public:
 
             Boid& b = m_boids[i];
 
-            //collision check
-            collision_detect(b, elapsed);
 
             //calculate cell
             size_t cell = calc_cell(b);
@@ -61,17 +59,16 @@ public:
             b.velocity.x += force_vel.x*b.scale * master_force;
             b.velocity.y += force_vel.y*b.scale * master_force;
 
-            // update the position of the corresponding vertex
-            m_boids[i].position.x += b.velocity.x * elapsed.asSeconds();
-            m_boids[i].position.y += b.velocity.y * elapsed.asSeconds();
-
             b.velocity.x = std::clamp(b.velocity.x, -vel_clamp,vel_clamp);
             b.velocity.y = std::clamp(b.velocity.y, -vel_clamp,vel_clamp);
+
+            //collision check
+            collision_detect(b, elapsed);
 
             //render boids as triangles
             
         }
-        create_tris();
+        create_tris(elapsed);
     }
 
 private:
@@ -97,7 +94,7 @@ private:
         double scale;
     };
     
-        void create_tris(){
+        void create_tris(sf::Time elapsed){
         sf::Vector2f point1;
         sf::Vector2f point2;
         sf::Vector2f point3;
@@ -105,6 +102,11 @@ private:
         sf::Color color;
         
         for (Boid& b :m_boids){
+
+            // update the position of the corresponding vertex
+            b.position.x += b.velocity.x * elapsed.asSeconds();
+            b.position.y += b.velocity.y * elapsed.asSeconds();
+            
             sf::Vector2f norm_vel = normalize(b.velocity);
 
             int point_id = (b.id)*3;
@@ -165,7 +167,7 @@ private:
 
                // std::cout << "new red: " << new_red << " new blue: " << new_blue << "new green: " << new_green << "\n";
 
-                b.hit -=.005;
+                b.hit -=.01;
                 return sf::Color(static_cast<unsigned int>(new_red),static_cast<unsigned int>(new_green),static_cast<unsigned int>(new_blue));
                 
             }else{
