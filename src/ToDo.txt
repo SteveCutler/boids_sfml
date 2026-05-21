@@ -19,6 +19,7 @@ Optimize performance in iterations
 Implement cell grid search structure:
 Instatiate grid vector at startup,
 
+//
 each frame:
 
 1. Clear grid
@@ -26,3 +27,8 @@ each frame:
 3. Calculate forces using grid
 4. Move boids
 5. Render
+
+
+
+//
+Switching to SoA model
