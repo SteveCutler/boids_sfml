@@ -25,7 +25,9 @@
         m_grid_height(grid_height), 
         m_cell_num(grid_width * grid_height), 
         m_grid_cells(m_cell_num),
-        m_cell_size(cell_size)
+        m_cell_size(cell_size),
+        m_force_x(count),
+        m_force_y(count)
         {
             SpawnBoids(count, x , y);
         }
@@ -35,12 +37,14 @@
                 //Cell Grid Helpers
                 clear_grid();
                 build_grid();
+
+                //clear force buffer from previous frame
+                std::fill(m_force_x.begin(), m_force_x.end(), 0.f);
+                std::fill(m_force_y.begin(), m_force_y.end(), 0.f);
                 
             
             for (std::size_t i = 0; i < m_boid_pos_x.size(); ++i)
             {
-                sf::Vector2f force_vel = sf::Vector2f(0.f,0.f);
-
 
 
                 //calculate cell - passing index
@@ -48,32 +52,26 @@
 
                 //clear neighbour buffer and find new neighbours
                 m_neighbour_buffer.clear();
-                m_neighbour_buffer = retrieve_neighbours(cell);
+                retrieve_neighbours(cell);
 
+                // if(m_neighbour_buffer.size()>0){
+                //     std::cout << "neighbours are: \n";
+                //     for(auto& n : m_neighbour_buffer){
+                //         std::cout << n <<"\n";
+                //     }
+                // }
                         
-                //apply boid forces
-                force_vel = seperation(i, elapsed, m_neighbour_buffer);  
-                force_vel += alignment(i, elapsed, m_neighbour_buffer) * align_master;
-                force_vel += attract(i, elapsed, m_neighbour_buffer) * attract_master;
+                //calculate boid forces
+                seperation(i, elapsed);  
+                alignment(i, elapsed);
+                attract(i, elapsed);
 
-                //master fade control on forces
-                force_vel.x = std::lerp(0.f,force_vel.x,force_strength);
-                force_vel.y = std::lerp(0.f,force_vel.y,force_strength);
-
-
-                //adding new force vector to velocity
-                m_boid_vel_x[i] += force_vel.x*m_scale[i] * master_force;
-                m_boid_vel_y[i] += force_vel.y*m_scale[i] * master_force;
-
-                m_boid_vel_x[i] = std::clamp(m_boid_vel_x[i], -vel_clamp,vel_clamp);
-                m_boid_vel_y[i] = std::clamp(m_boid_vel_y[i], -vel_clamp,vel_clamp);
-
-                //collision check
-                collision_detect(i, elapsed);
-
-                //render boids as triangles
                 
             }
+            //apply forces
+            apply_forces(elapsed);
+
+            //render boids as triangles
             create_tris(elapsed);
         }
 
@@ -145,12 +143,12 @@
 
             if ( x_delta > m_width or x_delta < 0){
                 m_boid_vel_x[i] *= -1;
-                m_boid_pos_x[i] += m_boid_vel_x[i] * elapsed.asSeconds();
+                //m_boid_pos_x[i] += m_boid_vel_x[i] * elapsed.asSeconds();
                 m_hit[i] = 1.f;
             }
             if ( y_delta > m_height or y_delta < 0){
                 m_boid_vel_y[i] *= -1;
-                m_boid_pos_y[i] += m_boid_vel_y[i] * elapsed.asSeconds();
+                //m_boid_pos_y[i] += m_boid_vel_y[i] * elapsed.asSeconds();
                 m_hit[i] = 1.f;
             }
         }
@@ -217,11 +215,9 @@
             return std::pair(x,y);
         }
 
-        std::vector<size_t> retrieve_neighbours(size_t cell_num){
+        void retrieve_neighbours(size_t cell_num){
             //retrieve x and y cell coordinates
             std::pair<size_t, size_t> coords = retrieve_coords(cell_num);
-            //create empty list
-            std::vector<size_t> n_boids;
 
             for (int dx = -1; dx <= 1; dx++){
                 for (int dy = -1; dy <= 1; dy++){
@@ -232,36 +228,24 @@
                     if ( x>=0 && x < m_grid_width &&
                         y>=0 && y < m_grid_height)
                         {
+                            int count = 0; 
 
                             size_t cell = y*m_grid_width+x;
 
                             if(!m_grid_cells[cell].empty()){
                             //add member ids to neighbour list
-                            for(auto& num : m_grid_cells[cell])
-                                n_boids.push_back(num);
+                                for(auto& num : m_grid_cells[cell])
+                                    if(count<m_max_neighbour){
+                                        m_neighbour_buffer.push_back(num);
+                                        count++;
+                                }   
                             }
 
                         }
                 }
             }
-            return n_boids;
         }
 
-        std::vector<size_t> find_b_neighbours(size_t i){
-            std::vector<size_t> n_boids;
-
-            //cell search logic
-            std::size_t cell = calc_cell(i);
-            std::vector<size_t> n_list = retrieve_neighbours(cell);
-
-            return n_list;
-        }
-
-        /*
-        for each boid:
-        retrieve neighbours
-        then run the checking tests for distance etc
-        */
 
 
         float distance(sf::Vector2f pos1, sf::Vector2f pos2){
@@ -273,11 +257,6 @@
         float calc_length(sf::Vector2f vector){
             return sqrt(std::pow(vector.x,2)+std::pow(vector.y,2));
         }
-
-        // void move_boid (Boid& b, sf::Time elapsed){
-        //     b.position.x += b.velocity.x*elapsed.asSeconds();
-        //     b.position.y += b.velocity.y*elapsed.asSeconds();
-        // }
 
 
         sf::Vector2f normalize (sf::Vector2f vector){
@@ -292,18 +271,42 @@
         
         // FORCES
 
+        //APPLY FORCES
+        void apply_forces(sf::Time elapsed){
+            for (int i =0; i<m_boid_pos_x.size(); i++){
+                
+
+                
+
+
+                //master fade control on forces
+                float force_vel_x = std::lerp(0.f,m_force_x[i],force_strength);
+                float force_vel_y = std::lerp(0.f,m_force_y[i],force_strength);
+
+
+                //adding new force vector to velocity
+                m_boid_vel_x[i] += force_vel_x*m_scale[i] * master_force;
+                m_boid_vel_y[i] += force_vel_y*m_scale[i] * master_force;
+
+                m_boid_vel_x[i] = std::clamp(m_boid_vel_x[i], -vel_clamp,vel_clamp);
+                m_boid_vel_y[i] = std::clamp(m_boid_vel_y[i], -vel_clamp,vel_clamp);
+
+                //collision check
+                collision_detect(i, elapsed);
+            }
+        }
 
 
         // SEPERATE
-        sf::Vector2f seperation(size_t i, sf::Time elapsed, const std::vector<size_t>& n_list){
+        void seperation(size_t i, sf::Time elapsed){
 
 
             //create empty sf vector
             sf::Vector2f seperation_force = sf::Vector2f(0.f,0.f);
 
             //check if any neighbours found in surrounding cells
-            if (n_list.size()>1){
-                for (const size_t& n_boid : n_list){
+            if (m_neighbour_buffer.size()>1){
+                for (const size_t& n_boid : m_neighbour_buffer){
 
                     //boid pos
                     sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
@@ -325,20 +328,22 @@
                 }
 
             }
-        // seperation_force =  normalize(seperation_force);
-            return seperation_force;
+        
+            m_force_x[i] += seperation_force.x;
+            m_force_y[i] += seperation_force.y;
+            return;
         }
 
         // ALIGN
-        sf::Vector2f alignment(size_t i,  sf::Time elapsed, const std::vector<size_t>& n_list){
-        
+        void alignment(size_t i,  sf::Time elapsed){
             
             sf::Vector2f align_force = sf::Vector2f(0.f,0.f);
+
             float counter = 0.f;
             float fade = 1.f;
             //check if any neighbours found in surrounding cells
-            if (n_list.size()>1){
-                for (const size_t& n_boid : n_list){
+            if (m_neighbour_buffer.size()>1){
+                for (const size_t& n_boid : m_neighbour_buffer){
                     
                     //boid pos
                     sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
@@ -352,7 +357,7 @@
                     if(dist<align_dist and n_boid != i){
                         
                         //determine fade effect based on distance
-                        fade = 1-(std::clamp((align_dist-dist) ,0.001f,align_dist)/(align_dist));       
+                        fade = (std::clamp((align_dist-dist) ,0.001f,align_dist)/(align_dist));       
 
                         //calculate new velocity
                         float new_x = std::lerp(m_boid_vel_x[i], m_boid_vel_x[n_boid], fade);
@@ -365,19 +370,17 @@
                     }
             }
             if(counter>0.f){
-                return (align_force/counter)*fade;
+                m_force_x[i] += (align_force.x/counter)* align_master;
+                m_force_y[i] += (align_force.y/counter)* align_master;
             }   
-            else{
-                return align_force;
-            }
+            
+                return;
         }
 
         // ATTRACT
 
-        sf::Vector2f attract(size_t i, sf::Time elapsed, const std::vector<size_t>& n_list){
+        void attract(size_t i, sf::Time elapsed){
 
-            
-        // std::vector<Boid> boids;
             float sumX = 0.f;
             float sumY = 0.f;
             std::size_t count = 0;
@@ -388,8 +391,8 @@
             sf::Vector2f b_pos = sf::Vector2f(m_boid_pos_x[i],m_boid_pos_y[i]);
 
             //check if any neighbours found in surrounding cells
-            if (n_list.size()>1){
-                for (const size_t& n_boid : n_list){
+            if (m_neighbour_buffer.size()>1){
+                for (const size_t& n_boid : m_neighbour_buffer){
 
 
                     // neighbouring boid pos
@@ -423,16 +426,14 @@
                 float dist = distance(b_pos,attractor);
 
                 //determine fade effect based on distance, clamp above 0
-                float fade = std::clamp( attract_dist-(dist) ,0.001f,attract_dist)/attract_dist;       
+                float fade = 1-std::clamp( attract_dist-(dist) ,0.001f,attract_dist)/attract_dist;       
 
                 sf::Vector2f attract_vector = calc_vector(b_pos, attractor) * fade;
 
-                return attract_vector;
+                m_force_x[i] += attract_vector.x* attract_master;
+                m_force_y[i] += attract_vector.y* attract_master;
             }
-            else{
-
-                return sf::Vector2f(0.f,0.f);
-            }
+            return;
         }
 
 
@@ -492,19 +493,21 @@
         //global variables
         unsigned int m_width;
         unsigned int m_height;
-        float force_strength = .5;
+        float force_strength =  .5;
+        int m_max_neighbour = 25;
 
         //boid size master
         float size = 5;
 
         //Force control
-        float seperation_dist = 15;
+        float seperation_dist = 10;
         float align_dist = 55;
-        float align_master = .6;
-        float attract_dist = 65;
-        float attract_master = .3;
-        float vel_clamp = 120.0;
-        float master_force = 1.3;
+        float attract_dist = 105;
+        float vel_clamp = 150.0;
+
+        float align_master = 1.2;
+        float attract_master = .8;
+        float master_force = .5;
 
         //Cell structure members
         std::size_t m_cell_num;
@@ -522,6 +525,9 @@
         std::vector<float>m_hit;
         std::vector<float>m_scale;
         std::vector<size_t>m_neighbour_buffer;
+        //force buffers
+        std::vector<float>m_force_x;
+        std::vector<float>m_force_y;
 
         //vertex array
         sf::VertexArray       m_vertices;
