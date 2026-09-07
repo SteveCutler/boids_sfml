@@ -1,3 +1,0 @@
-/Users/stevecutler/Documents/UVIC/Boids/boids_v1/build/CMakeFiles/boids_v1.dir
-/Users/stevecutler/Documents/UVIC/Boids/boids_v1/build/CMakeFiles/edit_cache.dir
-/Users/stevecutler/Documents/UVIC/Boids/boids_v1/build/CMakeFiles/rebuild_cache.dir

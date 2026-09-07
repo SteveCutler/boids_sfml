@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/Users/stevecutler/Documents/UVIC/Boids/boids_v1/build",
-  "command": "/usr/bin/clang++  -isystem /opt/homebrew/include -g -std=gnu++17 -arch arm64 -o CMakeFiles/boids_v1.dir/src/main.cpp.o -c /Users/stevecutler/Documents/UVIC/Boids/boids_v1/src/main.cpp",
-  "file": "/Users/stevecutler/Documents/UVIC/Boids/boids_v1/src/main.cpp",
-  "output": "CMakeFiles/boids_v1.dir/src/main.cpp.o"
-}
-]

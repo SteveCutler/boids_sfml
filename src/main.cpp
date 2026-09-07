@@ -1,98 +1,73 @@
-#include <iostream>
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
 #include "BoidSystem.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <iomanip>
+#include <iostream>
+#include <optional>
+#include <sstream>
 
 int main()
 {
-    //SET BOID COUNT
-    unsigned int boidCount = 400;
+    constexpr std::size_t boid_count = 400;
+    constexpr unsigned int width = 512;
+    constexpr unsigned int height = 256;
+    constexpr std::size_t cell_size = 64;
 
-    //SET WIDTH AND HEIGHT
-    unsigned int x_max = 512;
-    unsigned int y_max = 256;
-
-    //CELL VARIABLES
-    std::size_t cell_size = 64;
-    std::size_t grid_width = ceil(static_cast<float>(x_max)/64);
-    std::size_t grid_height = ceil(static_cast<float>(y_max)/64);
-
-    // create the window
-    sf::RenderWindow window(sf::VideoMode({x_max, y_max}), "Boids");
-
-    //Performance debug text
     sf::Font font;
-    bool loaded = font.openFromFile("/Users/stevecutler/Library/Fonts/digital-7 (italic).ttf");
+    if (!font.openFromFile(BOIDS_FONT_PATH))
+    {
+        std::cerr << "Failed to load bundled font: " << BOIDS_FONT_PATH << '\n';
+        return 1;
+    }
 
-    sf::Text fpsText(font);
-    fpsText.setCharacterSize(12);
-    fpsText.setFillColor(sf::Color::White);
-    fpsText.setPosition({5.f, 5.f});
-  
-    sf::Text msText(font);
-    msText.setCharacterSize(12);
-    msText.setFillColor(sf::Color::White);
-    msText.setPosition({5.f, 15.f});
-  
-    sf::Text boidText(font);
-    boidText.setCharacterSize(12);
-    boidText.setFillColor(sf::Color::White);
-    boidText.setPosition({5.f, 35.f});
-    
-    // create the boid system
-    BoidSystem boids(boidCount, x_max, y_max, cell_size, grid_width, grid_height);
+    sf::RenderWindow window(sf::VideoMode({width, height}), "Boids");
+    window.setVerticalSyncEnabled(true);
+    sf::Text overlay(font);
+    overlay.setCharacterSize(12);
+    overlay.setFillColor(sf::Color::White);
+    overlay.setPosition({5.f, 5.f});
+    BoidSystem boids(boid_count, width, height, cell_size);
 
-    // create a clock to track the elapsed time
+    // SFML time uses integer microseconds: approximately 60 simulation steps/s.
+    const sf::Time step = sf::microseconds(16667);
+    const sf::Time max_frame_time = sf::milliseconds(250);
+    sf::Time accumulator;
     sf::Clock clock;
 
-    // run the main loop
     while (window.isOpen())
     {
-        // handle events
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
+        if (!window.isOpen())
+            break;
 
-        // update it
-        sf::Time elapsed = clock.restart();
-        boids.update(elapsed);
+        const sf::Time elapsed = clock.restart();
+        // Drop time beyond 250 ms after a stall instead of unlimited catch-up.
+        accumulator += std::min(elapsed, max_frame_time);
+        while (accumulator >= step)
+        {
+            boids.update(step);
+            accumulator -= step;
+        }
 
-        //calculate performance values
-        float dt = elapsed.asSeconds();
-        float fps = 1.f / dt;
-        float ms = dt * 1000.f;
+        const float dt = elapsed.asSeconds();
+        const float fps = dt > 0.f ? 1.f / dt : 0.f;
+        std::ostringstream text;
+        text << "Boids: " << boid_count << '\n'
+             << std::fixed << std::setprecision(1) << "FPS: " << fps << '\n'
+             << "Frame ms: " << dt * 1000.f;
+        overlay.setString(text.str());
 
-        //overlay strings
-
-        boidText.setString(
-            "\nBoids: " + std::to_string(boidCount)
-        );
-
-        fpsText.setString(
-            "FPS: " + std::to_string(static_cast<int>(fps))
-        );
-
-        msText.setString(
-            "\nFrame ms: " + std::to_string(ms)
-        );
-
-
-        // DRAW BLOCK
-
-        //clear window
         window.clear();
-
-        //draw boids
         window.draw(boids);
-
-        //draw text
-        window.draw(boidText);
-        window.draw(fpsText);
-        window.draw(msText);
-
-        //display
+        window.draw(overlay);
         window.display();
     }
 }
